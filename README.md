@@ -1,3 +1,18 @@
 # LinguaForest
 LinguaForest is a research-driven design exploration that questions the assumption that language learning is a linear, easily measurable, and purely individual process. Grounded in the context of English Language Teaching (ELT), the project explores alternative ways of representing learning experiences through pedagogical metaphors, visual narratives, and reflective forms of learning data, rather than percentages, scores, or rankings. LinguaForest is not a finished application or product; it is a living conceptual framework that investigates how learning data in language education can be translated into more human-centered, non-judgmental, and pedagogically meaningful forms of feedback for both learners and teachers.
 Most digital tools used in language education describe learning through simplified indicators such as levels, scores, completion rates, or progress bars. While these metrics are convenient to measure and compare, they often fail to reflect how language learning actually unfolds: unevenly, socially, emotionally, and over time. In ELT contexts in particular, learning is rarely linear; progress in one skill can coexist with stagnation or regression in another, and meaningful development is often visible only through patterns, reflection, and interaction rather than immediate results. As a consequence, both learners and teachers are frequently left with data that measures performance but does not support understanding, sense-making, or pedagogical reflection. LinguaForest emerges from this gap between what is easy to measure and what is educationally meaningful.
+## What LinguaForest explores
+
+LinguaForest explores how learning experiences in English Language Teaching (ELT) can be represented, interpreted, and reflected upon beyond conventional performance metrics. Rather than treating learning as a linear trajectory measured through scores, levels, or completion rates, the project investigates narrative, visual, and metaphor-based approaches to learning analytics that foreground process, variability, and learner experience.
+
+Specifically, LinguaForest examines how learner-generated data (such as engagement patterns, skill distribution, interaction rhythms, and reflective inputs) can be transformed into meaningful visual narratives that support sense-making for both learners and teachers. These representations are not designed to rank, compare, or evaluate learners, but to prompt reflection, dialogue, and pedagogical decision-making.
+
+Grounded in ELT, the project draws on insights from language pedagogy, learning analytics, data visualization, and reflective practice to question how educational data might serve understanding rather than surveillance, and growth rather than judgment.
+
+## Scope & non-goals
+
+LinguaForest is not a learning management system, assessment platform, or automated evaluation tool. It does not aim to replace teachers, standard testing practices, or curriculum design, nor does it seek to predict learner success, generate grades, or optimize performance through algorithmic ranking.
+
+The project does not assume that more data leads to better learning. On the contrary, it deliberately limits its scope to forms of data that can support pedagogical reflection and learner awareness, avoiding high-stakes analytics, behavioral tracking for control, or competitive comparisons between learners.
+
+At this stage, LinguaForest is a conceptual and exploratory initiative rather than a fully implemented application. Questions of scalability, integration into existing platforms, and technical deployment are considered secondary to the development of a coherent pedagogical rationale and design language.
