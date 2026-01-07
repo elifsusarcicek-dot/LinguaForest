@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>LinguaForest | Öğrenme Yolculuğum</title>
+    <style>
+        body { margin: 0; font-family: 'Segoe UI', sans-serif; background: #fdfefd; color: #333; display: flex; height: 100vh; }
+        .sidebar { width: 320px; background: #fff; padding: 2rem; border-right: 1px solid #eee; display: flex; flex-direction: column; }
+        .main { flex-grow: 1; background: radial-gradient(circle at bottom, #e8f5e9, #fff); position: relative; }
+        h2 { color: #2e7d32; margin-bottom: 0.5rem; }
+        p { color: #666; font-size: 0.9rem; line-height: 1.5; }
+        
+        .reflection-card {
+            background: #f1f8e9; border-radius: 12px; padding: 1.5rem; margin-top: 2rem;
+        }
+        textarea {
+            width: 100%; height: 100px; border: 1px solid #c5e1a5; border-radius: 8px; 
+            padding: 10px; margin-top: 10px; font-family: inherit; resize: none;
+        }
+        button {
+            background: #2e7d32; color: white; border: none; padding: 10px 20px; 
+            border-radius: 6px; margin-top: 10px; cursor: pointer; width: 100%; font-weight: bold;
+        }
+        button:hover { background: #1b5e20; }
+        
+        /* Basitleştirilmiş Canvas */
+        canvas { display: block; margin: 0 auto; }
+        .date-badge { position: absolute; top: 20px; right: 20px; background: #fff; padding: 8px 15px; border-radius: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); font-weight: bold; color: #555; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>Benim Ormanım 🌿</h2>
+        <p>Bugünkü öğrenme durumun aşağıda görselleşiyor. Puanlar veya sıralamalar yok; sadece senin büyümen var.</p>
+        
+        <div class="reflection-card">
+            <strong>🌱 Günlük Yansıtma</strong>
+            <p>Bugün İngilizce kullanırken kendini nasıl hissettin?</p>
+            <textarea placeholder="Bugün kelimeleri hatırlamakta zorlandım ama konuşurken rahattım..."></textarea>
+            <button onclick="alert('Yansıman ormanına eklendi!')">Günlüğe Kaydet</button>
+        </div>
+
+        <div style="margin-top:auto; font-size:0.8rem; color:#999;">
+            *Gelişim doğrusal değildir, inişler ve çıkışlar doğaldır.
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="date-badge">📅 28 Ekim 2024</div>
+        <canvas id="studentCanvas"></canvas>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('studentCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth - 320;
+        canvas.height = window.innerHeight;
+
+        // Öğrenci için sabit, güzel bir ağaç varsayımı
+        function drawTree(startX, startY, len, angle, branchWidth) {
+            ctx.beginPath();
+            ctx.save();
+            ctx.strokeStyle = '#5d4037';
+            ctx.fillStyle = '#43a047'; // Daha canlı yeşil
+            ctx.lineWidth = branchWidth;
+            ctx.translate(startX, startY);
+            ctx.rotate(angle * Math.PI/180);
+            ctx.moveTo(0, 0);
+            ctx.lineTo(0, -len);
+            ctx.stroke();
+
+            if (len < 12) {
+                ctx.beginPath();
+                ctx.arc(0, -len, 6, 0, Math.PI/2); // Biraz daha büyük yapraklar
+                ctx.fill();
+                ctx.restore();
+                return;
+            }
+            drawTree(0, -len, len * 0.75, 20, branchWidth * 0.7);
+            drawTree(0, -len, len * 0.75, -20, branchWidth * 0.7);
+            ctx.restore();
+        }
+        
+        // Ortada tek ve güçlü bir ağaç
+        drawTree(canvas.width/2, canvas.height, 120, 0, 18);
+    </script>
+<div style="position: absolute; bottom: 10px; right: 20px; font-size: 0.7rem; color: #888; opacity: 0.7;">
+    &copy; 2024 LinguaForest Team. Created for AI4Change.
+</div>
+</body>
+</html>

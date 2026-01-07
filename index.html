@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinguaForest | Öğrenme Ekosistemi</title>
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --panel-bg: rgba(255, 255, 255, 0.85);
+            --text-color: #2c3e50;
+            --accent-color: #27ae60;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sol Panel: Veri Simülasyonu (Öğretmen/Öğrenci Girdileri) */
+        .sidebar {
+            width: 300px;
+            background: var(--panel-bg);
+            padding: 2rem;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            z-index: 10;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #555;
+        }
+
+        /* Estetik Sliderlar */
+        input[type=range] {
+            width: 100%;
+            cursor: pointer;
+            accent-color: var(--accent-color);
+        }
+
+        .metric-desc {
+            font-size: 0.75rem;
+            color: #888;
+            font-style: italic;
+        }
+
+        /* Sağ Taraf: Görselleştirme Alanı */
+        .canvas-container {
+            flex-grow: 1;
+            position: relative;
+            background: radial-gradient(circle at bottom center, #e8f5e9 0%, #f4f7f6 70%);
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        .overlay-info {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            max-width: 250px;
+        }
+        
+        .btn-seed {
+            padding: 10px;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        .btn-seed:hover { background-color: #219150; }
+
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="logo">
+            🌿 LinguaForest
+        </div>
+        <p style="font-size: 0.85rem; line-height: 1.4;">
+            Öğrenme verilerinin, puanlar yerine "büyüyen bir organizma" olarak temsili.
+        </p>
+        
+        <hr style="border: 0; border-top: 1px solid #ddd; width: 100%;">
+
+        <div class="control-group">
+            <label>Kelime Derinliği (Kökler)</label>
+            <input type="range" id="inputRoot" min="50" max="150" value="100">
+            <span class="metric-desc">Kelime hazinesinin sağlamlığı ağacın gövdesini ve boyunu belirler.</span>
+        </div>
+
+        <div class="control-group">
+            <label>Dilbilgisi Karmaşıklığı (Dallar)</label>
+            <input type="range" id="inputBranch" min="0.3" max="0.8" step="0.01" value="0.55">
+            <span class="metric-desc">Yapısal bilgi, dalların ne kadar karmaşık ve geniş yayılacağını gösterir.</span>
+        </div>
+
+        <div class="control-group">
+            <label>Etkileşim Sıklığı (Yapraklar)</label>
+            <input type="range" id="inputLeaf" min="0" max="20" value="10">
+            <span class="metric-desc">Ders dışı katılım ve pratik, ağacın yeşermesini ve canlanmasını sağlar.</span>
+        </div>
+
+        <button class="btn-seed" onclick="generateNewTree()">Yeni Bir 'Tohum' (Öğrenci) Seç</button>
+    </div>
+
+    <div class="canvas-container">
+        <canvas id="forestCanvas"></canvas>
+        
+        <div class="overlay-info">
+            <strong>Analiz Özeti</strong>
+            <p id="analysisText" style="font-size: 0.85rem; color: #666; margin-top: 0.5rem;">
+                Veriler işleniyor...
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('forestCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Canvas Boyutlandırma
+        function resize() {
+            canvas.width = window.innerWidth - 300; // Sidebar payı
+            canvas.height = window.innerHeight;
+            draw();
+        }
+        window.addEventListener('resize', resize);
+
+        // Değişkenler
+        let rootSize = 100;
+        let branchFactor = 0.55;
+        let leafDensity = 10;
+        let seed = Math.random();
+
+        // Elemanları Seçme
+        const inputRoot = document.getElementById('inputRoot');
+        const inputBranch = document.getElementById('inputBranch');
+        const inputLeaf = document.getElementById('inputLeaf');
+        const analysisText = document.getElementById('analysisText');
+
+        // Event Listeners - Veri değişimini anlık izle
+        inputRoot.addEventListener('input', (e) => { rootSize = parseInt(e.target.value); draw(); updateText(); });
+        inputBranch.addEventListener('input', (e) => { branchFactor = parseFloat(e.target.value); draw(); updateText(); });
+        inputLeaf.addEventListener('input', (e) => { leafDensity = parseInt(e.target.value); draw(); updateText(); });
+
+        function generateNewTree() {
+            seed = Math.random();
+            draw();
+            // Rastgele hafif değişimler yap
+            updateText();
+        }
+
+        // --- Fraktal Ağaç Çizim Algoritması ---
+        function drawTree(startX, startY, len, angle, branchWidth, depth) {
+            ctx.beginPath();
+            ctx.save();
+            ctx.strokeStyle = '#5d4037';
+            ctx.fillStyle = '#27ae60';
+            ctx.lineWidth = branchWidth;
+            ctx.translate(startX, startY);
+            ctx.rotate(angle * Math.PI/180);
+            ctx.moveTo(0, 0);
+            ctx.lineTo(0, -len);
+            ctx.stroke();
+
+            if (len < 10) {
+                // Yaprak Çizimi (Leaf Logic)
+                if (depth > 0 && Math.random() < (leafDensity / 15)) {
+                    ctx.beginPath();
+                    // Yaprak rengi değişimi (Canlılık metaforu)
+                    let r = 39 + Math.floor(Math.random() * 50);
+                    let g = 174 + Math.floor(Math.random() * 50);
+                    let b = 96;
+                    ctx.fillStyle = `rgba(${r},${g},${b}, 0.7)`;
+                    ctx.arc(0, -len, 3 + (leafDensity/3), 0, Math.PI/2);
+                    ctx.fill();
+                }
+                ctx.restore();
+                return;
+            }
+
+            // Recursive Çağrı (Dallanma)
+            // Branch factor slider'dan geliyor (Dilbilgisi karmaşıklığı)
+            let angleVariation = 20 + (Math.random() * 10); 
+            
+            drawTree(0, -len, len * 0.75, angleVariation, branchWidth * 0.7, depth + 1);
+            drawTree(0, -len, len * 0.75, -angleVariation, branchWidth * 0.7, depth + 1);
+            
+            // Eğer dilbilgisi çok iyiyse (branchFactor yüksekse) 3. bir dal ekle
+            if (branchFactor > 0.6) {
+                 drawTree(0, -len, len * 0.60, 0, branchWidth * 0.6, depth + 1);
+            }
+
+            ctx.restore();
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Rastgelelik için seed kullanımı (titremeyi engellemek için basitleştirildi)
+            // Bu örnekte her çizimde Math.random kullanıldığı için hafif titreme "yaşayan ağaç" hissi verir.
+            
+            // Ağacı Başlat
+            // rootSize slider'dan geliyor (Kelime derinliği)
+            drawTree(canvas.width / 2, canvas.height, rootSize + 20, 0, 15, 0);
+        }
+
+        function updateText() {
+            let status = "";
+            if(rootSize < 80) status += "Kelime dağarcığı henüz başlangıç seviyesinde. ";
+            else status += "Güçlü bir kelime temeli var. ";
+            
+            if(branchFactor > 0.65) status += "Karmaşık cümle yapıları kurulabiliyor. ";
+            else status += "Cümle yapıları basit ve doğrusal. ";
+
+            if(leafDensity > 15) status += "Öğrenci aktif ve etkileşimi yüksek.";
+            else status += "Daha fazla pratik ve katılım önerilir.";
+
+            analysisText.innerText = status;
+        }
+
+        // Başlat
+        resize();
+        updateText();
+
+    </script>
+<div style="position: absolute; bottom: 10px; right: 20px; font-size: 0.7rem; color: #888; opacity: 0.7;">
+    &copy; 2024 LinguaForest Team. Created for AI4Change.
+</div>
+</body>
+</html>
